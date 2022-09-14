@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/bot/internal/bot"
+	"github.com/bot/internal/bot/botsdk"
 	"github.com/bot/internal/core/config"
 	"github.com/gocpp/log"
 	"go.uber.org/zap"
@@ -18,6 +19,8 @@ func init() {
 
 func main() {
 	bot.Init()
+
+	botsdk.NewBotSdk().Gateway(config.BotToken.AccessToken)
 
 	handlerSignal()
 }
