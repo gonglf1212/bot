@@ -1,19 +1,23 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/bot/internal/bot"
+	"github.com/bot/internal/core/config"
 	"github.com/gocpp/log"
 	"go.uber.org/zap"
 )
 
 func init() {
-
+	flag.StringVar(&config.ConfigFile, "configfile", "./config/config.yaml", "config file")
 }
 
 func main() {
+	bot.Init()
 
 	handlerSignal()
 }
