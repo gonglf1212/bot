@@ -1,9 +1,18 @@
+/*
+ * @Author: gonglf
+ * @Date: 2022-09-15 09:35:25
+ * @LastEditors: gonglf
+ * @LastEditTime: 2022-09-15 10:32:28
+ * @Description:
+ *
+ */
 package bot
 
 import (
 	"io/ioutil"
 
-	"github.com/bot/internal/core/config"
+	"github.com/bot/internal/bot/config"
+	"github.com/bot/internal/bot/token"
 	"gopkg.in/yaml.v2"
 )
 
@@ -14,7 +23,7 @@ func Init() (err error) {
 	if err != nil {
 		panic(err)
 	}
-	token := new(config.Token)
+	token := new(token.Token)
 	err = yaml.Unmarshal(bs, token)
 	if err == nil {
 		config.BotToken = token

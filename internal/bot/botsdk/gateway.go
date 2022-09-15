@@ -2,7 +2,7 @@
  * @Author: gonglf
  * @Date: 2022-09-15 09:35:25
  * @LastEditors: gonglf
- * @LastEditTime: 2022-09-15 09:50:53
+ * @LastEditTime: 2022-09-15 10:29:29
  * @Description:
  *
  */
@@ -18,7 +18,7 @@ import (
 	"time"
 
 	"github.com/bot/dto"
-	"github.com/bot/internal/core/config"
+	"github.com/bot/internal/bot/token"
 	"github.com/go-resty/resty/v2"
 )
 
@@ -31,7 +31,7 @@ const (
 )
 
 type client struct {
-	token       *config.Token
+	token       *token.Token
 	gatewayURI  string
 	revokeURL   string
 	header      map[string]string
@@ -39,9 +39,9 @@ type client struct {
 	restyClient *resty.Client
 }
 
-func NewBotSdk(token *config.Token) *client {
+func NewBotSdk(tokenParam *token.Token) *client {
 	client := &client{
-		token:      token,
+		token:      tokenParam,
 		gatewayURI: gatewayURI,
 		header: map[string]string{
 			"content-type": contentType,
@@ -51,11 +51,11 @@ func NewBotSdk(token *config.Token) *client {
 			Timeout: 5 * time.Second,
 		},
 	}
-	authToken := fmt.Sprintf("%v.%s", token.AppID, token.AccessToken)
+	authToken := fmt.Sprintf("%v.%s", tokenParam.AppID, tokenParam.AccessToken)
 	client.restyClient = resty.New().
 		SetTimeout(3 * time.Second).
 		SetAuthToken(authToken).
-		SetAuthScheme(token.Type)
+		SetAuthScheme(string(tokenParam.Type))
 	return client
 }
 

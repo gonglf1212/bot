@@ -2,7 +2,7 @@
  * @Author: gonglf
  * @Date: 2022-09-15 09:35:25
  * @LastEditors: gonglf
- * @LastEditTime: 2022-09-15 09:52:32
+ * @LastEditTime: 2022-09-15 10:31:53
  * @Description:
  *
  */
@@ -16,7 +16,7 @@ import (
 
 	"github.com/bot/internal/bot"
 	"github.com/bot/internal/bot/botsdk"
-	"github.com/bot/internal/core/config"
+	"github.com/bot/internal/bot/config"
 	"github.com/gocpp/log"
 	"go.uber.org/zap"
 )
