@@ -1,3 +1,11 @@
+/*
+ * @Author: gonglf
+ * @Date: 2022-09-15 09:35:25
+ * @LastEditors: gonglf
+ * @LastEditTime: 2022-09-15 09:50:53
+ * @Description:
+ *
+ */
 package botsdk
 
 import (
@@ -8,6 +16,10 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/bot/dto"
+	"github.com/bot/internal/core/config"
+	"github.com/go-resty/resty/v2"
 )
 
 const (
@@ -19,14 +31,17 @@ const (
 )
 
 type client struct {
-	gatewayURI string
-	revokeURL  string
-	header     map[string]string
-	client     *http.Client
+	token       *config.Token
+	gatewayURI  string
+	revokeURL   string
+	header      map[string]string
+	client      *http.Client
+	restyClient *resty.Client
 }
 
-func NewBotSdk() *client {
+func NewBotSdk(token *config.Token) *client {
 	client := &client{
+		token:      token,
 		gatewayURI: gatewayURI,
 		header: map[string]string{
 			"content-type": contentType,
@@ -36,17 +51,25 @@ func NewBotSdk() *client {
 			Timeout: 5 * time.Second,
 		},
 	}
+	authToken := fmt.Sprintf("%v.%s", token.AppID, token.AccessToken)
+	client.restyClient = resty.New().
+		SetTimeout(3 * time.Second).
+		SetAuthToken(authToken).
+		SetAuthScheme(token.Type)
 	return client
 }
 
-func (c *client) Gateway(Authorization string) {
-	if Authorization == "" {
-		fmt.Println("-------")
-		return
+func (c *client) Gateway() (*dto.WebsocketAP, error) {
+	resp, err := c.restyClient.R().SetResult(dto.WebsocketAP{}).Get(c.gatewayURI)
+	if err != nil {
+		return nil, err
 	}
-	c.header["Authorization"] = Authorization
-	c.doRequest(gatewayURI, nil)
-
+	// fmt.Println("Response Info:")
+	// fmt.Println("  Error      :", err)
+	// fmt.Println("  Status Code:", resp.StatusCode())
+	// fmt.Println("  Status     :", resp.Status())
+	// fmt.Println("  Body       :\n", resp)
+	return resp.Result().(*dto.WebsocketAP), nil
 }
 
 func (c *client) doRequest(url string, data url.Values) ([]byte, error) {
@@ -57,7 +80,6 @@ func (c *client) doRequest(url string, data url.Values) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("---333s----")
 
 	for k, v := range c.header {
 		req.Header.Add(k, v)

@@ -1,3 +1,11 @@
+/*
+ * @Author: gonglf
+ * @Date: 2022-09-15 09:35:25
+ * @LastEditors: gonglf
+ * @LastEditTime: 2022-09-15 09:52:32
+ * @Description:
+ *
+ */
 package main
 
 import (
@@ -20,7 +28,8 @@ func init() {
 func main() {
 	bot.Init()
 
-	botsdk.NewBotSdk().Gateway(config.BotToken.AccessToken)
+	wsInfo, err := botsdk.NewBotSdk(config.BotToken).Gateway()
+	log.Info("wsInfo", zap.Any("wsinfo", wsInfo), zap.Any("err", err))
 
 	handlerSignal()
 }
