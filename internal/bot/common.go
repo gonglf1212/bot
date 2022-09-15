@@ -11,7 +11,6 @@ package bot
 import (
 	"io/ioutil"
 
-	"github.com/bot/internal/bot/botsdk"
 	"github.com/bot/internal/bot/config"
 	"github.com/bot/internal/bot/token"
 	"github.com/gocpp/log"
@@ -27,10 +26,10 @@ func Init() (err error) {
 		panic("loadConfig err")
 	}
 
-	if err = wsInfo(); err != nil {
-		log.Error("wsInfo err", zap.Error(err))
-		panic("wsInfo err")
-	}
+	// if err = wsInfo(); err != nil {
+	// 	log.Error("wsInfo err", zap.Error(err))
+	// 	panic("wsInfo err")
+	// }
 
 	return
 }
@@ -50,9 +49,9 @@ func loadConfig() (err error) {
 	return
 }
 
-func wsInfo() (err error) {
-	wsInfo, err := botsdk.NewBotSdk(config.BotToken).Gateway()
-	log.Info("wsInfo", zap.Any("wsinfo", wsInfo.URL), zap.Any("err", err))
-	config.WsInfo = wsInfo
-	return
-}
+// func wsInfo() (err error) {
+// 	wsInfo, err := botsdk.NewBotSdk(config.BotToken).Gateway()
+// 	log.Info("wsInfo", zap.Any("wsinfo", wsInfo.URL), zap.Any("err", err))
+// 	config.WsInfo = wsInfo
+// 	return
+// }

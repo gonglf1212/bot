@@ -28,7 +28,7 @@ func main() {
 	bot.Init()
 
 	server := new(bot.Server)
-	go server.Connect(config.WsInfo, config.BotToken)
+	go server.Connect(config.BotToken)
 
 	handlerSignal()
 }

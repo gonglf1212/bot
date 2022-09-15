@@ -9,7 +9,6 @@
 package config
 
 import (
-	"github.com/bot/dto"
 	"github.com/bot/internal/bot/token"
 )
 
@@ -17,5 +16,4 @@ import (
 var (
 	ConfigFile string
 	BotToken   *token.Token
-	WsInfo     *dto.WebsocketAP
 )
