@@ -1,11 +1,3 @@
-/*
- * @Author: gonglf
- * @Date: 2022-09-15 10:12:18
- * @LastEditors: gonglf
- * @LastEditTime: 2022-09-15 10:12:22
- * @Description:
- *
- */
 package websocket
 
 import (

@@ -2,13 +2,14 @@
  * @Author: gonglf
  * @Date: 2022-09-15 09:35:25
  * @LastEditors: gonglf
- * @LastEditTime: 2022-09-15 10:30:33
+ * @LastEditTime: 2022-09-15 12:01:27
  * @Description:
  *
  */
 package config
 
 import (
+	"github.com/bot/dto"
 	"github.com/bot/internal/bot/token"
 )
 
@@ -16,4 +17,5 @@ import (
 var (
 	ConfigFile string
 	BotToken   *token.Token
+	WsInfo     *dto.WebsocketAP
 )

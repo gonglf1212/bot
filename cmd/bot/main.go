@@ -2,7 +2,7 @@
  * @Author: gonglf
  * @Date: 2022-09-15 09:35:25
  * @LastEditors: gonglf
- * @LastEditTime: 2022-09-15 10:31:53
+ * @LastEditTime: 2022-09-15 14:21:54
  * @Description:
  *
  */
@@ -15,7 +15,6 @@ import (
 	"syscall"
 
 	"github.com/bot/internal/bot"
-	"github.com/bot/internal/bot/botsdk"
 	"github.com/bot/internal/bot/config"
 	"github.com/gocpp/log"
 	"go.uber.org/zap"
@@ -28,8 +27,8 @@ func init() {
 func main() {
 	bot.Init()
 
-	wsInfo, err := botsdk.NewBotSdk(config.BotToken).Gateway()
-	log.Info("wsInfo", zap.Any("wsinfo", wsInfo), zap.Any("err", err))
+	server := new(bot.Server)
+	go server.Connect(config.WsInfo, config.BotToken)
 
 	handlerSignal()
 }
