@@ -2,14 +2,18 @@
  * @Author: gonglf
  * @Date: 2022-09-15 12:25:01
  * @LastEditors: gonglf
- * @LastEditTime: 2022-09-15 18:26:24
+ * @LastEditTime: 2022-09-16 19:09:29
  * @Description:
  *
  */
 package bot
 
 import (
+	"fmt"
+	"sort"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/bot/dto"
 	"github.com/bot/dto/message"
@@ -23,7 +27,14 @@ import (
 )
 
 type Server struct {
-	apiClient *botsdk.Client
+	signInData sync.Map //打卡数据
+	apiClient  *botsdk.Client
+}
+
+type signUser struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+	Time int64  `json:"time"`
 }
 
 func NewServer() {
@@ -110,7 +121,7 @@ func (s *Server) ATMessageEventHandler() event.ATMessageEventHandler {
 		input := strings.ToLower(message.ETLInput(data.Content))
 		cmd := message.ParseCommand(input) //指令
 		toCreate := &dto.MessageToCreate{
-			Content: "打卡成功",
+			Content: "复读:" + data.Content,
 			MessageReference: &dto.MessageReference{
 				// 引用这条消息
 				MessageID:             data.ID,
@@ -118,12 +129,68 @@ func (s *Server) ATMessageEventHandler() event.ATMessageEventHandler {
 			},
 			MsgID: data.ID,
 		}
-
+		log.Info("---user", zap.Any("Author", data.Author), zap.Any("Member", data.Member))
 		switch cmd.Cmd {
 
-		case "/打卡":
+		case "/打卡", "打卡":
+			if ok, t := s.sign(data.Author); ok {
+				date := time.UnixMicro(t).Format("2006-01-02 15:04:05")
+				toCreate.Content = "打卡成功：" + date
+			} else {
+				date := time.UnixMicro(t).Format("2006-01-02 15:04:05")
+				toCreate.Content = "您已经打过卡了：" + date
+			}
+			s.apiClient.PostMessage(data.ChannelID, toCreate)
+		case "打卡排行榜", "/打卡排行榜":
+			content := s.signList()
+			toCreate.Content = content
+			s.apiClient.PostMessage(data.ChannelID, toCreate)
+		default:
 			s.apiClient.PostMessage(data.ChannelID, toCreate)
 		}
 		return nil
 	}
+}
+
+//打卡
+func (s *Server) sign(user *dto.User) (ok bool, t int64) {
+
+	u := signUser{
+		Id:   user.ID,
+		Name: user.Username,
+		Time: time.Now().UnixMicro(),
+	}
+
+	if o, f := s.signInData.LoadOrStore(user.ID, u); !f {
+		t = u.Time
+		ok = true //打卡成功
+	} else {
+		oldUser := o.(signUser)
+		t = oldUser.Time
+	}
+	return
+}
+
+func (s *Server) signList() (list string) {
+	list = "排行榜：\n"
+	var rank []signUser
+	rank = make([]signUser, 0)
+	s.signInData.Range(func(key, value any) bool {
+		user, ok := value.(signUser)
+		if ok {
+			rank = append(rank, user)
+		}
+		return true
+	})
+	sort.Slice(rank, func(i, j int) bool {
+		return rank[i].Time > rank[j].Time
+	})
+	for i, user := range rank {
+		r := i + 1
+		date := time.UnixMicro(user.Time).Format("2006-01-02 15:04:05")
+		item := fmt.Sprintf("%d：昵称：%s，打卡时间：%s\n", r, user.Name, date)
+		list += item
+	}
+
+	return
 }
