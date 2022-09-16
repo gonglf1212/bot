@@ -2,7 +2,7 @@
  * @Author: gonglf
  * @Date: 2022-09-15 12:25:01
  * @LastEditors: gonglf
- * @LastEditTime: 2022-09-16 19:09:29
+ * @LastEditTime: 2022-09-16 19:13:50
  * @Description:
  *
  */
@@ -183,7 +183,7 @@ func (s *Server) signList() (list string) {
 		return true
 	})
 	sort.Slice(rank, func(i, j int) bool {
-		return rank[i].Time > rank[j].Time
+		return rank[i].Time < rank[j].Time
 	})
 	for i, user := range rank {
 		r := i + 1
