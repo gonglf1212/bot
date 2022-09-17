@@ -188,7 +188,7 @@ func (s *Server) signList() (list string) {
 	for i, user := range rank {
 		r := i + 1
 		date := time.UnixMicro(user.Time).Format("2006-01-02 15:04:05")
-		item := fmt.Sprintf("%d：昵称：%s，打卡时间：%s\n", r, user.Name, date)
+		item := fmt.Sprintf("No.%d：昵称：%s，打卡时间：%s\n", r, user.Name, date)
 		list += item
 	}
 
